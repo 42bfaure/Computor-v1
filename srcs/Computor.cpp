@@ -1,5 +1,21 @@
 #include "../headers/Computor.hpp"
 
+std::string Computor::_formatCoefficient(double value) const
+{
+	std::string result = std::to_string(value);
+	size_t dotPos = result.find('.');
+
+	if (dotPos == std::string::npos)
+		return result;
+	while (!result.empty() && result[result.size() - 1] == '0')
+		result.erase(result.size() - 1);
+	if (!result.empty() && result[result.size() - 1] == '.')
+		result.erase(result.size() - 1);
+	if (result == "-0")
+		return "0";
+	return result;
+}
+
 Computor::Computor(std::string equation) : _equation(equation)
 {
 	std::cout << "Computor initialized with equation: " << _equation << std::endl;
@@ -71,48 +87,71 @@ void Computor::parseEquation()
 	this->_splitTerms(leftSide, LEFT_SIDE);
 	this->_splitTerms(rightSide, RIGHT_SIDE);
 	this->_parseCoefficients();
+	this->reducedForm();
 	return ;
 }
 
 void Computor::_parseCoefficients()
 {
-	_coefficients[LEFT_SIDE].assign(3, 0.0);
-	_coefficients[RIGHT_SIDE].assign(3, 0.0);
+	std::string exp = "";
+	_coefficientOrder.clear();
 
 	for (size_t i = 0; i < _terms.at(LEFT_SIDE).size(); i++)
 	{
 		const std::string &term = _terms.at(LEFT_SIDE).at(i);
 		size_t pos = term.find("X^");
-		if (pos != std::string::npos && (pos + 2) < term.size())
-		{
-			double coef = std::stod(term.substr(0, pos));
-			int exp = std::stoi(term.substr(pos + 2));
-			if (exp >= 0 && exp <= 2)
-				_coefficients[LEFT_SIDE][exp] += coef;
-		}
+		exp = term.substr(pos, pos + 2);
+		std::cout << "exp: " << exp << std::endl;
+		if (std::find(_coefficientOrder.begin(), _coefficientOrder.end(), exp) == _coefficientOrder.end())
+			_coefficientOrder.push_back(exp);
+		_coefficients[exp] += std::stod(term.substr(0, pos));
 	}
+	std::cout << "--------------------------------" << std::endl;
 	for (size_t i = 0; i < _terms.at(RIGHT_SIDE).size(); i++)
 	{
 		const std::string &term = _terms.at(RIGHT_SIDE).at(i);
 		size_t pos = term.find("X^");
-		if (pos != std::string::npos && (pos + 2) < term.size())
-		{
-			double coef = std::stod(term.substr(0, pos));
-			int exp = std::stoi(term.substr(pos + 2));
-			if (exp >= 0 && exp <= 2)
-				_coefficients[RIGHT_SIDE][exp] += coef;
-		}
+		exp = term.substr(pos, pos + 2);
+		std::cout << "exp: " << exp << std::endl;
+		if (std::find(_coefficientOrder.begin(), _coefficientOrder.end(), exp) == _coefficientOrder.end())
+			_coefficientOrder.push_back(exp);
+		_coefficients[exp] -= std::stod(term.substr(0, pos));
 	}
-	for (int exp = 0; exp <= 2; exp++)
+	for (size_t i = 0; i < _coefficientOrder.size(); i++)
 	{
-		std::cout << "Left coeff X^" << exp << ": " << _coefficients[LEFT_SIDE][exp] << std::endl;
-		std::cout << "Right coeff X^" << exp << ": " << _coefficients[RIGHT_SIDE][exp] << std::endl;
+		const std::string &power = _coefficientOrder[i];
+		std::cout << "Coefficient " << _coefficients[power] << "" << power << std::endl;
 	}
 	return ;
 }
 
 void Computor::reducedForm()
 {
-	std::cout << "Reducing form of equation: " << _equation << std::endl;
-
+	std::cout << "Reduced form of equation: ";
+	_reducedForm.clear();
+	bool hasPrintedTerm = false;
+	for (size_t i = 0; i < _coefficientOrder.size(); i++)
+	{
+		const std::string &power = _coefficientOrder[i];
+		double coefficient = _coefficients[power];
+		if (coefficient == 0.0)
+			continue;
+		if (!hasPrintedTerm)
+		{
+			_reducedForm += _formatCoefficient(coefficient) + power;
+			hasPrintedTerm = true;
+		}
+		else
+		{
+			if (coefficient < 0.0)
+				_reducedForm += " - " + _formatCoefficient(-coefficient) + power;
+			else
+				_reducedForm += " + " + _formatCoefficient(coefficient) + power;
+		}
+	}
+	if (!hasPrintedTerm)
+		_reducedForm += "0";
+	_reducedForm += " = 0";
+	std::cout << _reducedForm << std::endl;
+	return ;
 }

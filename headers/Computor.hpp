@@ -6,6 +6,7 @@
 #include <vector>
 #include <sstream>
 #include <map>
+#include <algorithm>
 
 #define LEFT_SIDE 0
 #define RIGHT_SIDE 1
@@ -23,7 +24,9 @@ class Computor
         int _b;
         int _c;
         int _delta;
-		std::map<int, std::vector<double> > _coefficients;
+		std::map<std::string, double> _coefficients;
+		std::vector<std::string> _coefficientOrder;
+		std::string _formatCoefficient(double value) const;
         void _parseCoefficients();
         void _splitTerms(std::string equation, int index);
         std::map<int, std::vector<std::string> > _split(const std::string &str, int index);
