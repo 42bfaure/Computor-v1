@@ -1,5 +1,15 @@
 #include "../headers/Computor.hpp"
 
+/**
+ * @file
+ * @brief Implements parsing and reduction routines of `Computor`.
+ */
+
+/**
+ * @brief Format a floating-point coefficient for readable output.
+ * @param value Input coefficient.
+ * @return A decimal string without unnecessary trailing zeros.
+ */
 std::string Computor::_formatCoefficient(double value) const
 {
 	std::string result = std::to_string(value);
@@ -16,6 +26,9 @@ std::string Computor::_formatCoefficient(double value) const
 	return result;
 }
 
+/**
+ * @brief Build a solver and immediately parse the provided equation.
+ */
 Computor::Computor(std::string equation) : _equation(equation)
 {
 	std::cout << "Computor initialized with equation: " << _equation << std::endl;
@@ -25,10 +38,19 @@ Computor::Computor(std::string equation) : _equation(equation)
 	// this->solve();
 }
 
+/**
+ * @brief Destroy a `Computor` instance.
+ */
 Computor::~Computor()
 {
 }
 
+/**
+ * @brief Split a side of the equation into signed term tokens.
+ * @param str Equation side.
+ * @param index Side identifier (`LEFT_SIDE` or `RIGHT_SIDE`).
+ * @return Map containing the extracted terms for the requested side.
+ */
 std::map<int, std::vector<std::string> > Computor::_split(const std::string &str, int index)
 {
 	std::map<int, std::vector<std::string> > result;
@@ -48,6 +70,11 @@ std::map<int, std::vector<std::string> > Computor::_split(const std::string &str
 	return result;
 }
 
+/**
+ * @brief Parse and store terms for one side of the equation.
+ * @param equation Equation side string.
+ * @param index Side identifier (`LEFT_SIDE` or `RIGHT_SIDE`).
+ */
 void Computor::_splitTerms(std::string equation, int index)
 {
 	std::cout << "Splitting terms for equation " << index << ": " << equation << std::endl;
@@ -60,6 +87,12 @@ void Computor::_splitTerms(std::string equation, int index)
 	return ;
 }
 
+/**
+ * @brief Parse the raw equation string into internal term collections.
+ *
+ * This routine removes spaces and `*`, splits equation around `=`, tokenizes
+ * each side, and computes reduced coefficients before printing reduced form.
+ */
 void Computor::parseEquation()
 {
 	std::string leftSide;
@@ -91,6 +124,9 @@ void Computor::parseEquation()
 	return ;
 }
 
+/**
+ * @brief Aggregate coefficients by power from parsed terms.
+ */
 void Computor::_parseCoefficients()
 {
 	std::string exp = "";
@@ -125,6 +161,9 @@ void Computor::_parseCoefficients()
 	return ;
 }
 
+/**
+ * @brief Build and print the reduced polynomial form.
+ */
 void Computor::reducedForm()
 {
 	std::cout << "Reduced form of equation: ";
