@@ -16,13 +16,12 @@ class Computor
 	private:
 		std::string _equation;
 		std::string _reducedForm;
-		int _discriminant; // 0 : Δ > 0, 1 : Δ = 0, 2 : Δ < 0
-		int _degree;
+		int _degree; // 0 : Δ < 0, 1 : Δ = 0, 2 : Δ > 0
         std::string _solutions;
         std::map<int, std::vector<std::string> > _terms;
-        int _a;
-        int _b;
-        int _c;
+        int _a = 0;
+        int _b = 0;
+        int _c = 0;
         int _delta;
 		std::map<std::string, double> _coefficients;
 		std::vector<std::string> _coefficientOrder;

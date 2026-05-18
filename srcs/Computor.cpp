@@ -1,4 +1,5 @@
 #include "../headers/Computor.hpp"
+#include <cmath>
 
 std::string Computor::_formatCoefficient(double value) const
 {
@@ -88,18 +89,29 @@ void Computor::parseEquation()
 	this->_splitTerms(rightSide, RIGHT_SIDE);
 	this->_parseCoefficients();
 	this->reducedForm();
+	this->discriminant();
+	this->solve();
 	return ;
 }
+
+
 
 void Computor::_parseCoefficients()
 {
 	std::string exp = "";
 	_coefficientOrder.clear();
-
+	
 	for (size_t i = 0; i < _terms.at(LEFT_SIDE).size(); i++)
 	{
 		const std::string &term = _terms.at(LEFT_SIDE).at(i);
 		size_t pos = term.find("X^");
+		if (pos == std::string::npos)
+		{
+			_terms.at(RIGHT_SIDE).at(i) = _terms.at(RIGHT_SIDE).at(i) + "X^0";
+			std::cout << "Term normalized: " << term << std::endl;
+			i--;
+			continue;
+		}
 		exp = term.substr(pos, pos + 2);
 		std::cout << "exp: " << exp << std::endl;
 		if (std::find(_coefficientOrder.begin(), _coefficientOrder.end(), exp) == _coefficientOrder.end())
@@ -111,17 +123,24 @@ void Computor::_parseCoefficients()
 	{
 		const std::string &term = _terms.at(RIGHT_SIDE).at(i);
 		size_t pos = term.find("X^");
+		if (pos == std::string::npos)
+		{
+			_terms.at(RIGHT_SIDE).at(i) = _terms.at(RIGHT_SIDE).at(i) + "X^0";
+			std::cout << "Term normalized: " << term << std::endl;
+			i--;
+			continue;
+		}
 		exp = term.substr(pos, pos + 2);
 		std::cout << "exp: " << exp << std::endl;
 		if (std::find(_coefficientOrder.begin(), _coefficientOrder.end(), exp) == _coefficientOrder.end())
 			_coefficientOrder.push_back(exp);
 		_coefficients[exp] -= std::stod(term.substr(0, pos));
 	}
-	for (size_t i = 0; i < _coefficientOrder.size(); i++)
-	{
-		const std::string &power = _coefficientOrder[i];
-		std::cout << "Coefficient " << _coefficients[power] << "" << power << std::endl;
-	}
+	_a = _coefficients["X^2"];
+	_b = _coefficients["X^1"];
+	_c = _coefficients["X^0"];
+	std::cout << "a = " << _a << ", b = " << _b << ", c = " << _c << std::endl;
+	std::cout << "--------------------------------" << std::endl;
 	return ;
 }
 
@@ -153,5 +172,36 @@ void Computor::reducedForm()
 		_reducedForm += "0";
 	_reducedForm += " = 0";
 	std::cout << _reducedForm << std::endl;
+	return ;
+}
+
+void Computor::discriminant()
+{
+	std::cout << "Calculating discriminant..." << std::endl;
+	std::cout << "b^2 - 4ac = " << _b << "^2 - 4 * " << _a << " * " << _c << std::endl;
+	_delta = _b * _b - 4 * _a * _c;
+	std::cout << "Δ = " << _delta << std::endl;
+	return ;
+}
+
+void Computor::solve()
+{
+	if (_delta > 0)
+	{
+		std::cout << "So Δ > 0, the equation has two real solutions" << std::endl;
+		_solutions = "x1 = " + _formatCoefficient((-_b + std::sqrt(_delta)) / (2 * _a)) + " and x2 = " + _formatCoefficient((-_b - std::sqrt(_delta)) / (2 * _a));
+	}
+	else if (_delta == 0)
+	{
+		std::cout << "So Δ = 0, the equation has one real solution" << std::endl;
+		_solutions = "x = " + _formatCoefficient(-_b / (2 * _a));
+	}
+	else
+	{
+		std::cout << "So Δ < 0, the equation has two complex solutions" << std::endl;
+		_solutions = "x1 = " + _formatCoefficient(-_b / (2 * _a)) + " + i * " + _formatCoefficient(std::sqrt(-_delta) / (2 * _a)) + " and x2 = " + _formatCoefficient(-_b / (2 * _a)) + " - i * " + _formatCoefficient(std::sqrt(-_delta) / (2 * _a));
+	}
+	std::cout << "The solutions are: " << std::endl;
+	std::cout << _solutions << std::endl;
 	return ;
 }

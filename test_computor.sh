@@ -172,6 +172,24 @@ main() {
 			"Reduced form: 1 * X^0 + 2 * X^1 + 5 * X^2 = 0" \
 			"Polynomial degree: 2" \
 			"Discriminant is strictly negative"
+		run_test \
+			"[strict] Coefficients decimaux simples" \
+			"0.5 * X^0 + 1.5 * X^1 = 2 * X^0" \
+			"Reduced form: 1.5 * X^1 = 1.5 * X^0" \
+			"Polynomial degree: 1" \
+			"The solution is:"
+		run_test \
+			"[strict] Equation deja reduite" \
+			"4 * X^2 - 3 * X^1 + 2 * X^0 = 0 * X^0" \
+			"Reduced form: 4 * X^2 - 3 * X^1 + 2 * X^0 = 0" \
+			"Polynomial degree: 2" \
+			"Discriminant is strictly positive"
+		run_test \
+			"[strict] Termes dans ordre melange" \
+			"-3 * X^2 + 7 * X^0 + 1 * X^1 = 2 * X^1 - 1 * X^0" \
+			"Reduced form: -3 * X^2 + 8 * X^0 = 0" \
+			"Polynomial degree: 2" \
+			"Discriminant is strictly positive"
 	fi
 
 	echo "==> Resultats"
