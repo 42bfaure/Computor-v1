@@ -23,7 +23,6 @@ int main(int argc, char **argv)
 				return 1;
 			}
 		}
-		
 		Computor computor(argv[1]);
 		if (argc > 2 && std::strcmp(argv[2], "--verbose") == 0)
 			computor.setVerbose(true);
