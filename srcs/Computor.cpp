@@ -16,12 +16,19 @@ Computor::~Computor() {}
 
 void Computor::Calcul()
 {
-	this->parseEquation();
-	this->_parseCoefficients();
-	this->reducedForm();
-	this->discriminant();
-	this->degree();
-	this->solve();
+	try
+	{
+		this->parseEquation();
+		this->_parseCoefficients();
+		this->degree();
+		this->reducedForm();
+		this->discriminant();
+		this->solve();
+	}
+	catch (const std::exception &e)
+	{
+		throw std::invalid_argument(e.what());
+	}
 }
 void Computor::setTerms(std::string equation, int index)
 {
@@ -144,6 +151,8 @@ void Computor::reducedForm()
 void Computor::degree()
 {
 	_degree = _coefficientOrder.size() - 1;
+	if (_degree < 0)
+		throw std::invalid_argument("Invalid equation, I can't solve.");
 	return ;
 }
 
