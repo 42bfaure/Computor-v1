@@ -1,6 +1,6 @@
 NAME = computor
 
-SRCS = srcs/Computor.cpp srcs/main.cpp
+SRCS = srcs/Computor.cpp srcs/main.cpp srcs/utils.cpp
 
 OBJ_DIR = objs
 OBJS = $(patsubst srcs/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
